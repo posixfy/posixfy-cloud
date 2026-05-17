@@ -1,0 +1,51 @@
+name: Tests
+
+on:
+  workflow_call:
+
+jobs:
+  backend-test:
+    name: Backend (Go)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version-file: backend/go.mod
+
+      - name: Create placeholder dist for embed
+        run: mkdir -p static/dist && touch static/dist/.placeholder
+
+      - name: Run tests
+        run: go test ./...
+
+      - name: Build
+        run: go build -o /dev/null .
+
+  frontend-build:
+    name: Frontend (Vue)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Type check
+        run: npx vue-tsc --noEmit
+
+      - name: Build
+        run: npm run build

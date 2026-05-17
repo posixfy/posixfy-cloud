@@ -1,0 +1,30 @@
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Claude Code
+.claude/
+
+# Go binary
+backend/posixfy-cloud
+backend/*.db
+backend/*.db-shm
+backend/*.db-wal
+
+# Node
+frontend/node_modules/
+frontend/dist/
+frontend/tsconfig.tsbuildinfo
+
+# Embedded frontend (built by Makefile/CI, not committed)
+backend/static/dist/
