@@ -1,0 +1,71 @@
+version: "3.8"
+
+services:
+  bridge:
+    image: ghcr.io/posixfy/posixfy-bridge:latest
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      placement:
+        constraints:
+          - node.role == manager
+    environment:
+      - API_KEY=${API_KEY}
+      - LISTEN_ADDR=0.0.0.0:3000
+      - MOUNT_POINTS=${MOUNT_POINTS}
+      - RUST_LOG=${RUST_LOG:-info}
+    volumes:
+      - ${DATA_PATH}:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 3s
+      start_period: 10s
+      retries: 3
+    networks:
+      - internal
+
+  cloud:
+    image: ghcr.io/posixfy/posixfy-cloud:latest
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      labels:
+        traefik.enable: "true"
+        traefik.http.routers.posixfy-cloud.rule: "Host(`${DOMAIN}`)"
+        traefik.http.routers.posixfy-cloud.entrypoints: "websecure"
+        traefik.http.routers.posixfy-cloud.tls: "true"
+        traefik.http.routers.posixfy-cloud.tls.certresolver: "letsencrypt"
+        traefik.http.services.posixfy-cloud.loadbalancer.server.port: "8080"
+        # SSE keepalive for file change notifications
+        traefik.http.middlewares.posixfy-sse.headers.customResponseHeaders.X-Accel-Buffering: "no"
+        traefik.http.routers.posixfy-cloud.middlewares: "posixfy-sse@docker"
+    environment:
+      - API_KEY=${API_KEY}
+      - JWT_SECRET=${JWT_SECRET}
+      - FILEBRIDGE_URL=http://bridge:3000
+      - LISTEN_ADDR=0.0.0.0:8080
+      - DB_PATH=/data/posixfy-cloud.db
+      - ADMIN_INIT_PASSWORD=${ADMIN_INIT_PASSWORD}
+      - CORS_ORIGINS=https://${DOMAIN}
+    volumes:
+      - cloud-data:/data
+    networks:
+      - traefik
+      - internal
+    depends_on:
+      - bridge
+
+volumes:
+  cloud-data:
+
+networks:
+  traefik:
+    external: true
+  internal:
+    driver: overlay
+    internal: true
