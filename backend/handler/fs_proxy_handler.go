@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 
@@ -21,6 +22,14 @@ type FSProxyHandler struct {
 
 func NewFSProxyHandler(client *service.FSClient) *FSProxyHandler {
 	return &FSProxyHandler{Client: client}
+}
+
+// buildUpstreamPath creates a URL path with properly encoded query parameters.
+func buildUpstreamPath(endpoint string, mount string, path string) string {
+	q := url.Values{}
+	q.Set("mount", mount)
+	q.Set("path", path)
+	return endpoint + "?" + q.Encode()
 }
 
 func (h *FSProxyHandler) parseGroups(groupsJSON string) string {
@@ -55,7 +64,7 @@ func (h *FSProxyHandler) List(c *gin.Context) {
 	mount := c.Query("mount")
 	path := c.Query("path")
 
-	upstream := fmt.Sprintf("/api/fs/list?mount=%s&path=%s", mount, path)
+	upstream := buildUpstreamPath("/api/fs/list", mount, path)
 	resp, err := h.Client.Do("GET", upstream, claims.UID, claims.GID, groups, nil, "", nil)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "upstream service unavailable"})
@@ -72,7 +81,7 @@ func (h *FSProxyHandler) Download(c *gin.Context) {
 	mount := c.Query("mount")
 	path := c.Query("path")
 
-	upstream := fmt.Sprintf("/api/fs/file?mount=%s&path=%s", mount, path)
+	upstream := buildUpstreamPath("/api/fs/file", mount, path)
 	resp, err := h.Client.Do("GET", upstream, claims.UID, claims.GID, groups, nil, "", nil)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "upstream service unavailable"})
@@ -96,7 +105,7 @@ func (h *FSProxyHandler) Upload(c *gin.Context) {
 	mount := c.Query("mount")
 	path := c.Query("path")
 
-	upstream := fmt.Sprintf("/api/fs/upload?mount=%s&path=%s", mount, path)
+	upstream := buildUpstreamPath("/api/fs/upload", mount, path)
 	contentType := c.GetHeader("Content-Type")
 
 	// Forward OCC headers if present
@@ -124,7 +133,7 @@ func (h *FSProxyHandler) Delete(c *gin.Context) {
 	mount := c.Query("mount")
 	path := c.Query("path")
 
-	upstream := fmt.Sprintf("/api/fs/delete?mount=%s&path=%s", mount, path)
+	upstream := buildUpstreamPath("/api/fs/delete", mount, path)
 	resp, err := h.Client.Do("DELETE", upstream, claims.UID, claims.GID, groups, nil, "", nil)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "upstream service unavailable"})
@@ -141,7 +150,7 @@ func (h *FSProxyHandler) Mkdir(c *gin.Context) {
 	mount := c.Query("mount")
 	path := c.Query("path")
 
-	upstream := fmt.Sprintf("/api/fs/mkdir?mount=%s&path=%s", mount, path)
+	upstream := buildUpstreamPath("/api/fs/mkdir", mount, path)
 	resp, err := h.Client.Do("POST", upstream, claims.UID, claims.GID, groups, nil, "", nil)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "upstream service unavailable"})
@@ -163,7 +172,7 @@ func (h *FSProxyHandler) Watch(c *gin.Context) {
 	mount := c.Query("mount")
 	path := c.Query("path")
 
-	upstream := fmt.Sprintf("/api/fs/watch?mount=%s&path=%s", mount, path)
+	upstream := buildUpstreamPath("/api/fs/watch", mount, path)
 	resp, err := h.Client.DoStream("GET", upstream, claims.UID, claims.GID, groups)
 	if err != nil {
 		c.JSON(http.StatusBadGateway, gin.H{"error": "upstream service unavailable"})
