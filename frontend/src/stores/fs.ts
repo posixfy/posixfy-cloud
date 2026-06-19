@@ -17,6 +17,8 @@ export const useFsStore = defineStore('fs', () => {
   const currentPath = ref('/')
   const files = ref<FileEntry[]>([])
   const loading = ref(false)
+  // Hide system/junk files (.DS_Store, ._*, Thumbs.db, ...) by default.
+  const showHidden = ref(false)
 
   async function fetchMounts() {
     const res = await getMounts()
@@ -65,7 +67,7 @@ export const useFsStore = defineStore('fs', () => {
             name: event.name,
             is_dir: event.is_dir,
             size: event.size,
-            modified: String(event.modified),
+            modified: event.modified,
             permissions: '',
           })
         }
@@ -74,7 +76,7 @@ export const useFsStore = defineStore('fs', () => {
         const existing = files.value.find((f) => f.name === event.name)
         if (existing) {
           existing.size = event.size
-          existing.modified = String(event.modified)
+          existing.modified = event.modified
         }
         break
       }
@@ -90,6 +92,7 @@ export const useFsStore = defineStore('fs', () => {
     currentPath,
     files,
     loading,
+    showHidden,
     fetchMounts,
     fetchFiles,
     navigateTo,
@@ -98,3 +101,8 @@ export const useFsStore = defineStore('fs', () => {
     applyEvent,
   }
 })
+
+// A name is considered hidden if it is a dotfile or a known OS junk file.
+export function isHiddenName(name: string): boolean {
+  return name.startsWith('.') || name === 'Thumbs.db' || name === 'desktop.ini'
+}

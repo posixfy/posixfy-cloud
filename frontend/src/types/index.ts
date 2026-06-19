@@ -43,7 +43,8 @@ export interface FileEntry {
   name: string
   is_dir: boolean
   size: number
-  modified: string
+  // Epoch milliseconds (matches what the bridge now emits and JS `new Date()` expects).
+  modified: number
   permissions: string
 }
 

@@ -62,7 +62,7 @@
 import { computed } from 'vue'
 import { Download, Delete } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { useFsStore } from '@/stores/fs'
+import { useFsStore, isHiddenName } from '@/stores/fs'
 import { downloadFile, deleteFile } from '@/api/fs'
 import type { FileEntry } from '@/types'
 
@@ -70,7 +70,7 @@ const emit = defineEmits<{ refresh: [] }>()
 const fs = useFsStore()
 
 const sortedFiles = computed(() => {
-  const items = [...fs.files]
+  const items = fs.files.filter((f) => fs.showHidden || !isHiddenName(f.name))
   items.sort((a, b) => {
     if (a.is_dir !== b.is_dir) return a.is_dir ? -1 : 1
     return a.name.localeCompare(b.name)
@@ -96,7 +96,8 @@ async function handleDownload(row: FileEntry) {
     a.download = row.name
     a.click()
     URL.revokeObjectURL(url)
-  } catch {
+  } catch (e) {
+    console.error('[fs] download failed', filePath, e)
     ElMessage.error('Download failed')
   }
 }
@@ -110,7 +111,8 @@ async function handleDelete(row: FileEntry) {
     await deleteFile(fs.currentMount, filePath)
     ElMessage.success('Deleted')
     emit('refresh')
-  } catch {
+  } catch (e) {
+    console.error('[fs] delete failed', filePath, e)
     ElMessage.error('Delete failed')
   }
 }
@@ -122,9 +124,10 @@ function formatSize(bytes: number): string {
   return (bytes / Math.pow(1024, i)).toFixed(i > 0 ? 1 : 0) + ' ' + units[i]
 }
 
-function formatDate(iso: string): string {
-  if (!iso) return '-'
-  return new Date(iso).toLocaleString()
+function formatDate(ms: number): string {
+  if (!ms) return '-'
+  const d = new Date(ms)
+  return isNaN(d.getTime()) ? '-' : d.toLocaleString()
 }
 </script>
 

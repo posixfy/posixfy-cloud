@@ -8,6 +8,13 @@
         <div class="flex items-center gap-3 mb-5">
           <el-button :icon="Upload" @click="uploadVisible = true">Upload</el-button>
           <el-button :icon="FolderAdd" @click="mkdirVisible = true">New Folder</el-button>
+          <el-switch
+            v-model="fs.showHidden"
+            class="ml-auto"
+            inline-prompt
+            active-text="Show hidden"
+            inactive-text="Hide system files"
+          />
         </div>
         <FileList @refresh="refresh" />
         <UploadDialog v-model="uploadVisible" @done="refresh" />
