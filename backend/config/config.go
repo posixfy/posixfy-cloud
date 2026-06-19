@@ -13,6 +13,7 @@ type Config struct {
 	ListenAddr        string
 	AdminInitPassword string
 	CORSOrigins       []string
+	LogLevel          string
 }
 
 func Load() *Config {
@@ -24,6 +25,7 @@ func Load() *Config {
 		ListenAddr:        getEnv("LISTEN_ADDR", "0.0.0.0:8080"),
 		AdminInitPassword: os.Getenv("ADMIN_INIT_PASSWORD"),
 		CORSOrigins:       parseCORSOrigins(getEnv("CORS_ORIGINS", "*")),
+		LogLevel:          getEnv("LOG_LEVEL", "info"),
 	}
 }
 

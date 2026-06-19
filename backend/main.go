@@ -3,9 +3,11 @@ package main
 import (
 	"context"
 	"log"
+	"log/slog"
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
 	"time"
 
@@ -15,8 +17,28 @@ import (
 	"posixfy-cloud/backend/service"
 )
 
+// setupLogging configures the default slog logger with a structured JSON
+// handler whose level is controlled by the LOG_LEVEL env var.
+func setupLogging(level string) {
+	var lvl slog.Level
+	switch strings.ToLower(level) {
+	case "debug":
+		lvl = slog.LevelDebug
+	case "warn", "warning":
+		lvl = slog.LevelWarn
+	case "error":
+		lvl = slog.LevelError
+	default:
+		lvl = slog.LevelInfo
+	}
+	handler := slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: lvl})
+	slog.SetDefault(slog.New(handler))
+}
+
 func main() {
 	cfg := config.Load()
+	setupLogging(cfg.LogLevel)
+	slog.Info("logging configured", "level", cfg.LogLevel)
 
 	db := database.Open(cfg.DBPath)
 	defer db.Close()

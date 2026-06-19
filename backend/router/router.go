@@ -19,6 +19,9 @@ import (
 func Setup(cfg *config.Config, userService *service.UserService, fsClient *service.FSClient) *gin.Engine {
 	r := gin.Default()
 
+	// Correlation id for every request (echoed + forwarded to the bridge).
+	r.Use(middleware.RequestID())
+
 	// CORS configuration from environment
 	allowAllOrigins := len(cfg.CORSOrigins) == 1 && cfg.CORSOrigins[0] == "*"
 	corsConfig := cors.Config{
