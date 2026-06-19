@@ -7,6 +7,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 ## [Unreleased]
 
 ### Added
+- Docker Swarm stack manifest (`stack.yml`) for production deployment
+
+### Fixed
+- Encode mount and path query parameters in FS proxy upstream URLs
+
+## [0.1.0] - 2026-05-17
+
+### Added
 - Initial release of Posixfy Cloud
 - JWT authentication with role-based access (admin / user)
 - User management API (CRUD)
