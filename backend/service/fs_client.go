@@ -48,7 +48,7 @@ func (c *FSClient) Do(method, path string, uid, gid int, groups string, body io.
 }
 
 // DoStream performs a request using an HTTP client without timeout, suitable for SSE streams.
-func (c *FSClient) DoStream(method, path string, uid, gid int, groups string) (*http.Response, error) {
+func (c *FSClient) DoStream(method, path string, uid, gid int, groups string, extraHeaders map[string]string) (*http.Response, error) {
 	url := c.BaseURL + path
 
 	req, err := http.NewRequest(method, url, nil)
@@ -60,6 +60,10 @@ func (c *FSClient) DoStream(method, path string, uid, gid int, groups string) (*
 	req.Header.Set("X-FS-UID", fmt.Sprintf("%d", uid))
 	req.Header.Set("X-FS-GID", fmt.Sprintf("%d", gid))
 	req.Header.Set("X-FS-Groups", groups)
+
+	for k, v := range extraHeaders {
+		req.Header.Set(k, v)
+	}
 
 	// Use a client without timeout for long-lived SSE connections
 	streamClient := &http.Client{}
