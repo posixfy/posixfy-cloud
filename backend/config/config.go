@@ -6,7 +6,7 @@ import (
 )
 
 type Config struct {
-	FilebridgeURL     string
+	BridgeURL         string
 	APIKey            string
 	JWTSecret         string
 	DBPath            string
@@ -18,7 +18,7 @@ type Config struct {
 
 func Load() *Config {
 	return &Config{
-		FilebridgeURL:     getEnv("FILEBRIDGE_URL", "http://127.0.0.1:3000"),
+		BridgeURL:         getEnv("POSIXFY_BRIDGE_URL", "http://127.0.0.1:3000"),
 		APIKey:            mustEnv("API_KEY"),
 		JWTSecret:         mustEnv("JWT_SECRET"),
 		DBPath:            getEnv("DB_PATH", "./posixfy-cloud.db"),

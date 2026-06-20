@@ -5,7 +5,7 @@
         class="font-semibold text-lg text-gray-900 cursor-pointer"
         @click="$router.push(auth.isAdmin ? '/admin' : '/')"
       >
-        FileBridge
+        Posixfy
       </span>
       <nav class="flex items-center gap-1">
         <a

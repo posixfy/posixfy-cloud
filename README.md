@@ -52,7 +52,7 @@ docker run -d \
   -p 8080:8080 \
   -e API_KEY=dev-key \
   -e JWT_SECRET=your-jwt-secret-32chars-minimum \
-  -e FILEBRIDGE_URL=http://host.docker.internal:3000 \
+  -e POSIXFY_BRIDGE_URL=http://host.docker.internal:3000 \
   -e ADMIN_INIT_PASSWORD=admin123 \
   -v cloud-data:/data \
   ghcr.io/posixfy/posixfy-cloud:latest
@@ -77,7 +77,7 @@ services:
     environment:
       - API_KEY=change-me
       - JWT_SECRET=change-me-to-a-random-jwt-secret
-      - FILEBRIDGE_URL=http://bridge:3000
+      - POSIXFY_BRIDGE_URL=http://bridge:3000
       - ADMIN_INIT_PASSWORD=admin123
     depends_on:
       - bridge
@@ -90,7 +90,7 @@ make build
 
 API_KEY=dev-key \
 JWT_SECRET=dev-jwt-secret-32chars-minimum \
-FILEBRIDGE_URL=http://127.0.0.1:3000 \
+POSIXFY_BRIDGE_URL=http://127.0.0.1:3000 \
 LISTEN_ADDR=0.0.0.0:8080 \
 ADMIN_INIT_PASSWORD=admin123 \
 ./backend/posixfy-cloud
@@ -102,7 +102,7 @@ ADMIN_INIT_PASSWORD=admin123 \
 |----------|----------|---------|-------------|
 | `API_KEY` | Yes | — | Must match the Bridge service's API key |
 | `JWT_SECRET` | Yes | — | Secret for signing JWT tokens (min 32 chars) |
-| `FILEBRIDGE_URL` | Yes | — | URL of the running Posixfy Bridge instance |
+| `POSIXFY_BRIDGE_URL` | Yes | — | URL of the running Posixfy Bridge instance |
 | `LISTEN_ADDR` | No | `0.0.0.0:8080` | Bind address |
 | `DB_PATH` | No | `./posixfy-cloud.db` | SQLite database path |
 | `ADMIN_INIT_PASSWORD` | Yes | — | Password for the initial admin user |
