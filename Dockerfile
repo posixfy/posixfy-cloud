@@ -33,9 +33,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY --from=backend-builder /app/backend/posixfy-cloud /usr/local/bin/posixfy-cloud
 
-RUN useradd -r -s /bin/false -m filebridge
-USER filebridge
-WORKDIR /home/filebridge
+RUN useradd -r -s /bin/false -m posixfy
+USER posixfy
+WORKDIR /home/posixfy
 
 EXPOSE 8080
 

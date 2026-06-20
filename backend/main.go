@@ -46,7 +46,7 @@ func main() {
 	userService := service.NewUserService(db)
 	userService.Bootstrap(cfg.AdminInitPassword)
 
-	fsClient := service.NewFSClient(cfg.FilebridgeURL, cfg.APIKey)
+	fsClient := service.NewFSClient(cfg.BridgeURL, cfg.APIKey)
 
 	r := router.Setup(cfg, userService, fsClient)
 
