@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Added
+- Structured JSON logging (`slog`) with a `LOG_LEVEL` environment variable (`debug`/`info`/`warn`/`error`, default `info`). Failures calling the bridge are now logged instead of being silently swallowed, and upstream responses with status `>= 400` are logged with the response body.
+- `X-Request-Id` correlation id propagated browser → cloud → bridge for end-to-end request tracing.
+- "Show hidden" toggle in the file browser; system/junk files (`.DS_Store`, `._*`, `Thumbs.db`, `desktop.ini`) are hidden by default.
+- Failed API calls are now logged to the browser devtools console.
+
+### Fixed
+- File "Modified" column showed dates near 1970; timestamps are now interpreted as epoch milliseconds (matching the bridge).
+- A deleted file could reappear after refresh due to a cached listing; `/api/fs/list` now sends `Cache-Control: no-store`.
+
 ## [0.2.0] - 2026-06-19
 
 ### Added
