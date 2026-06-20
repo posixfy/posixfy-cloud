@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-06-20
+
 ### Added
 - Structured JSON logging (`slog`) with a `LOG_LEVEL` environment variable (`debug`/`info`/`warn`/`error`, default `info`). Failures calling the bridge are now logged instead of being silently swallowed, and upstream responses with status `>= 400` are logged with the response body.
 - `X-Request-Id` correlation id propagated browser → cloud → bridge for end-to-end request tracing.
