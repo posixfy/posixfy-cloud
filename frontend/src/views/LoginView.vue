@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-gray-50 flex items-center justify-center">
     <div class="bg-white rounded-2xl shadow-lg p-10 w-96">
       <div class="text-center mb-8">
-        <h1 class="text-2xl font-semibold text-gray-900">FileBridge</h1>
+        <h1 class="text-2xl font-semibold text-gray-900">Posixfy</h1>
         <p class="text-sm text-gray-400 mt-1">Sign in to your account</p>
       </div>
       <el-form
