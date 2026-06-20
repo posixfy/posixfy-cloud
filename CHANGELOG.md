@@ -6,6 +6,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
+### Changed
+- **BREAKING:** Renamed the bridge connection environment variable `FILEBRIDGE_URL` → `POSIXFY_BRIDGE_URL`. Existing deployments must update this variable in their `docker-compose.yml` / Swarm `stack.yml` / secrets; the old name is no longer read and the connection silently falls back to the default `http://127.0.0.1:3000`. The Go config field `FilebridgeURL` was likewise renamed to `BridgeURL`.
+- Rebranded the web UI from "FileBridge" to "Posixfy" (browser title, app header, login page); the frontend npm package is now `posixfy-web`.
+- The container image now runs as the `posixfy` system user (previously `filebridge`).
+
 ## [0.3.0] - 2026-06-20
 
 ### Added
